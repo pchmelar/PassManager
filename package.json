@@ -1,0 +1,30 @@
+{
+  "name": "pass-manager",
+  "version": "1.0.0",
+  "description": "Web client for zx2c4 password manager",
+  "main": "js/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pchmelar/PassManager.git"
+  },
+  "keywords": [
+    "zx2c4",
+    "password",
+    "pass",
+    "manager"
+  ],
+  "author": "pchmelar",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pchmelar/PassManager/issues"
+  },
+  "homepage": "https://github.com/pchmelar/PassManager#readme",
+  "dependencies": {
+    "angular": "^1.4.8",
+    "angular-ui-bootstrap": "^0.14.3",
+    "bootstrap": "^3.3.6"
+  }
+}
