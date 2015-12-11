@@ -24,10 +24,8 @@ var openpgp = require('openpgp');
 module.exports = function($scope) {
 
     // Local shared variables
-    var privateKeyFileReader = new FileReader(),
-        encryptedFileReader = new FileReader(),
-        loadedPrivateKey,
-        loadedEncryptedFile;
+    var loadedPrivateKey,
+        loadedEncryptedFile = [];
 
     // Page elements
     var keyPasswordInput = document.getElementById('pwd');
@@ -38,7 +36,24 @@ module.exports = function($scope) {
             keyPasswordInput.value = '';
 
             if (loadedPrivateKey.primaryKey.isDecrypted) {
-                handleEncryptedFile('.password-store/office/test.gpg')
+
+                //load config file
+                var txtFile = new XMLHttpRequest();
+                txtFile.open("GET", "config.txt", true);
+                txtFile.onreadystatechange = function() {
+                    if (txtFile.readyState === 4) { // document is ready to parse.
+                        if (txtFile.status === 200 || txtFile.status == 0) { // file is found
+
+                            //decrypt all files specified in config
+                            var lines = txtFile.responseText.split("\n");
+                            for (var i = 0; i < lines.length; i++) {
+                                handleEncryptedFile('.password-store/' + lines[i], i);
+                            }
+                        }
+                    }
+                }
+                txtFile.send(null);
+
             }
         }
     });
@@ -76,8 +91,7 @@ module.exports = function($scope) {
         } else {}
     }
 
-    var handleEncryptedFile = function(file) {
-        loadedEncryptedFile = null;
+    var handleEncryptedFile = function(file, index) {
         var rawFile = new XMLHttpRequest();
         rawFile.open("GET", file, true);
         rawFile.responseType = "arraybuffer";
@@ -90,25 +104,25 @@ module.exports = function($scope) {
                     for (var i = 0; i < byteArray.byteLength; i++) {
                         data += String.fromCharCode(parseInt(byteArray[i]));
                     }
-                    encryptedFileReader(data);
+                    encryptedFileReader(data, index);
                 }
             }
         }
         rawFile.send(null);
     };
 
-    var encryptedFileReader = function(file) {
+    var encryptedFileReader = function(file, index) {
         try {
-            loadedEncryptedFile = readBinaryMessage(file);
+            loadedEncryptedFile[index] = readBinaryMessage(file);
         } catch (e) {
             try {
-                loadedEncryptedFile = openpgp.message.readArmored(file);
+                loadedEncryptedFile[index] = openpgp.message.readArmored(file);
             } catch (e) {}
         }
 
         if (loadedEncryptedFile) {}
 
-        decryptIfReady();
+        decryptIfReady(index);
     };
 
     // Read a binary gpg encrypted file to an openpgp Message.
@@ -146,9 +160,9 @@ module.exports = function($scope) {
         return result;
     };
 
-    var decryptIfReady = function() {
+    var decryptIfReady = function(index) {
 
-        if (loadedPrivateKey && loadedPrivateKey.primaryKey.isDecrypted && loadedEncryptedFile) {
+        if (loadedPrivateKey && loadedPrivateKey.primaryKey.isDecrypted && loadedEncryptedFile[index]) {
 
             // Wrap the slow decryption process in a timeout block so it won't block the browser,
             // also give it a few milliseconds for the renderings above to happen in the browser.
@@ -156,7 +170,7 @@ module.exports = function($scope) {
             // security restrictions and working with file:// is a hard requirement.
             setTimeout(function() {
 
-                openpgp.decryptMessage(loadedPrivateKey, loadedEncryptedFile).then(function(plaintext) {
+                openpgp.decryptMessage(loadedPrivateKey, loadedEncryptedFile[index]).then(function(plaintext) {
                     console.log(plaintext);
                 }).catch(function(error) {
                     // failure
