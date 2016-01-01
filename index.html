@@ -27,16 +27,31 @@
 <body ng-app="PassManager" ng-controller="MainController">
     <div class="container">
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-3 col-sm-6 col-xs-12">
                 <h2>PassManager</h2>
                 <br>
                 <div class="form-group">
                     <label for="pwd">Password:</label>
                     <input type="password" class="form-control" id="pwd">
                 </div>
+                <br>
+                <br>
             </div>
         </div>
-    </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel-group">
+                    <div class="panel panel-default" ng-repeat="o in output">
+                        <div class="panel-heading" ng-click="isCollapsed = !isCollapsed">
+                            <h4 class="panel-title">{{ o.file }}</h4>
+                        </div>
+                        <div uib-collapse="!isCollapsed" class="panel-collapse collapse">
+                            <div class="panel-body">{{ o.password }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 </body>
 
 </html>
