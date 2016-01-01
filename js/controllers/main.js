@@ -19,6 +19,7 @@ module.exports = function($scope, $q) {
         if (event.keyCode === 13) {
             loadedPrivateKey.decrypt(keyPasswordInput.value);
             keyPasswordInput.value = '';
+            $scope.output = [];
             if (loadedPrivateKey.primaryKey.isDecrypted) {
                 //load config file
                 var txtFile = new XMLHttpRequest();

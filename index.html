@@ -41,7 +41,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="panel-group">
-                    <div class="panel panel-default" ng-repeat="o in output">
+                    <div class="panel panel-default" ng-repeat="o in output | orderBy: 'file'">
                         <div class="panel-heading" ng-click="isCollapsed = !isCollapsed">
                             <h4 class="panel-title">{{ o.file }}</h4>
                         </div>
