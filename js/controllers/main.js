@@ -151,8 +151,6 @@ module.exports = function($scope, $q) {
                         file: filename,
                         password: plaintext
                     });
-                    //output.file.push(filename);
-                    //output.password.push(plaintext);
                     return $q(function(resolve) {
                         resolve();
                     });
