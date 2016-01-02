@@ -5,7 +5,7 @@
 
 var openpgp = require('openpgp');
 
-module.exports = function($scope, $q, $sce) {
+module.exports = function($scope, $q, $sce, $window, Idle) {
 
     $scope.radioModel = 'office';
     $scope.locked = true;
@@ -167,7 +167,7 @@ module.exports = function($scope, $q, $sce) {
 
                 openpgp.decryptMessage(loadedPrivateKey, loadedEncryptedFile[index]).then(function(plaintext) {
                     $scope.output.push({
-                        file: filename.replace(/.password-store\/|.gpg/g,''),
+                        file: filename.replace(/.password-store\/|.gpg/g, ''),
                         password: $sce.trustAsHtml(plaintext.replace(/\n/g, "<br>"))
                     });
                     return $q(function(resolve) {
@@ -182,5 +182,10 @@ module.exports = function($scope, $q, $sce) {
         }
 
     };
+
+    //reload page after idle timeout
+    $scope.$on('IdleStart', function() {
+        window.location.reload();
+    });
 
 };
