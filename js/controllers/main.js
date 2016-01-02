@@ -7,6 +7,7 @@ var openpgp = require('openpgp');
 
 module.exports = function($scope, $q) {
 
+    $scope.locked = true;
     $scope.output = [];
 
     //local shared variables
@@ -17,10 +18,13 @@ module.exports = function($scope, $q) {
     var keyPasswordInput = document.getElementById('pwd');
     keyPasswordInput.addEventListener('keydown', function(event) {
         if (event.keyCode === 13) {
+
             loadedPrivateKey.decrypt(keyPasswordInput.value);
             keyPasswordInput.value = '';
             $scope.output = [];
+
             if (loadedPrivateKey.primaryKey.isDecrypted) {
+                $scope.locked = false;
                 //load config file
                 var txtFile = new XMLHttpRequest();
                 txtFile.open("GET", "config.txt", true);
@@ -36,6 +40,9 @@ module.exports = function($scope, $q) {
                     }
                 }
                 txtFile.send(null);
+            } else {
+                $scope.passForm.pwd.$setValidity("pwd", false);
+                console.log("Wrong password");
             }
         }
     });
@@ -66,7 +73,7 @@ module.exports = function($scope, $q) {
         if (loadedPrivateKey && loadedPrivateKey.isPrivate() && loadedPrivateKey.primaryKey) {
             if (!loadedPrivateKey.primaryKey.isDecrypted) {
                 keyPasswordInput.focus();
-            }  
+            }
         } else {
             console.log("Invalid private key " + filename);
         }
