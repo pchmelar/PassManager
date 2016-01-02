@@ -5,14 +5,20 @@
 
 var openpgp = require('openpgp');
 
-module.exports = function($scope, $q) {
+module.exports = function($scope, $q, $sce) {
 
+    $scope.radioModel = 'office';
     $scope.locked = true;
     $scope.output = [];
 
     //local shared variables
     var loadedPrivateKey,
         loadedEncryptedFile = [];
+
+    //reload private key if radioModel is selected
+    $scope.$watchCollection('radioModel', function() {
+        handlePrivateKeyFile('.gnupg/secring.gpg');
+    });
 
     //password input
     var keyPasswordInput = document.getElementById('pwd');
@@ -27,7 +33,8 @@ module.exports = function($scope, $q) {
                 $scope.locked = false;
                 //load config file
                 var txtFile = new XMLHttpRequest();
-                txtFile.open("GET", "config.txt", true);
+                if ($scope.radioModel == 'admin') txtFile.open("GET", "conf/admin.txt", true);
+                else txtFile.open("GET", "conf/office.txt", true);
                 txtFile.onreadystatechange = function() {
                     if (txtFile.readyState === 4) { // document is ready to parse.
                         if (txtFile.status === 200 || txtFile.status == 0) { // file is found
@@ -69,7 +76,11 @@ module.exports = function($scope, $q) {
     };
 
     var privateKeyReader = function(filename, data) {
-        loadedPrivateKey = readBinaryKey(data).keys[0]; //load first private key in file
+
+        //load private key based on radioModel selection
+        if ($scope.radioModel == 'admin') loadedPrivateKey = readBinaryKey(data).keys[1];
+        else loadedPrivateKey = readBinaryKey(data).keys[0];
+
         if (loadedPrivateKey && loadedPrivateKey.isPrivate() && loadedPrivateKey.primaryKey) {
             if (!loadedPrivateKey.primaryKey.isDecrypted) {
                 keyPasswordInput.focus();
@@ -156,8 +167,8 @@ module.exports = function($scope, $q) {
 
                 openpgp.decryptMessage(loadedPrivateKey, loadedEncryptedFile[index]).then(function(plaintext) {
                     $scope.output.push({
-                        file: filename,
-                        password: plaintext
+                        file: filename.replace(/.password-store\/|.gpg/g,''),
+                        password: $sce.trustAsHtml(plaintext.replace(/\n/g, "<br>"))
                     });
                     return $q(function(resolve) {
                         resolve();
@@ -171,7 +182,5 @@ module.exports = function($scope, $q) {
         }
 
     };
-
-    handlePrivateKeyFile('.gnupg/secring.gpg');
 
 };

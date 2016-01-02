@@ -30,15 +30,21 @@
             <div class="col-md-3 col-sm-6 col-xs-12">
                 <h2>PassManager</h2>
                 <br>
-                <form name="passForm">
+                <form name="passForm" ng-hide="!locked">
+                    <div class="btn-group" ng-hide="!locked">
+                        <label class="btn btn-default" ng-model="radioModel" uib-btn-radio="'office'">office</label>
+                        <label class="btn btn-default" ng-model="radioModel" uib-btn-radio="'admin'">admin</label>
+                    </div>
+                    <br>
+                    <br>
                     <div class="form-group has-feedback" ng-hide="!locked" ng-class="{ 'has-error': passForm.pwd.$invalid }">
                         <label for="pwd">Password:</label>
                         <input class="form-control" type="password" name="pwd" id="pwd" ng-model="pwd">
                         <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-remove': passForm.pwd.$invalid}"></span>
                     </div>
+                    <br>
+                    <br>
                 </form>
-                <br>
-                <br>
             </div>
         </div>
         <div class="row">
@@ -49,7 +55,7 @@
                             <h4 class="panel-title">{{ o.file }}</h4>
                         </div>
                         <div uib-collapse="!isCollapsed" class="panel-collapse collapse">
-                            <div class="panel-body">{{ o.password }}</div>
+                            <div class="panel-body" ng-bind-html="o.password">{{ o.password }}</div>
                         </div>
                     </div>
                 </div>
