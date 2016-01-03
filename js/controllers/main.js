@@ -11,6 +11,10 @@ module.exports = function($scope, $q, $sce, $window, Idle) {
     $scope.locked = true;
     $scope.output = [];
 
+    //track decrypting progress
+    $scope.filesDecrypted = 0;
+    $scope.filesTotal = 0;
+
     //local shared variables
     var loadedPrivateKey,
         loadedEncryptedFile = [];
@@ -40,6 +44,9 @@ module.exports = function($scope, $q, $sce, $window, Idle) {
                         if (txtFile.status === 200 || txtFile.status == 0) { // file is found
                             //decrypt all files specified in config
                             var lines = txtFile.responseText.split("\n");
+                            $scope.$apply(function() {
+                                $scope.filesTotal = lines.length;
+                            });
                             for (var i = 0; i < lines.length; i++) {
                                 handleEncryptedFile('.password-store/' + lines[i], i);
                             }
@@ -171,6 +178,8 @@ module.exports = function($scope, $q, $sce, $window, Idle) {
                         password: $sce.trustAsHtml(plaintext.replace(/\n/g, "<br>"))
                     });
                     return $q(function(resolve) {
+                        $scope.filesDecrypted++;
+                        console.log($scope.filesDecrypted + "/" + $scope.filesTotal);
                         resolve();
                     });
                 }).catch(function(error) {

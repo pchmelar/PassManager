@@ -6,4 +6,4 @@ var angular_bootstrap = require('angular-ui-bootstrap');
 
 var app = angular.module('PassManager', ['ngIdle', 'ui.bootstrap']);
 
-require('./controllers')
+require('./controllers');

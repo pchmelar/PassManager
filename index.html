@@ -49,6 +49,7 @@
         </div>
         <div class="row">
             <div class="col-md-12">
+                <h4 ng-if="filesDecrypted != filesTotal">Decrypting...</h4>
                 <div class="panel-group">
                     <div class="panel panel-default" ng-repeat="o in output | orderBy: 'file'">
                         <div class="panel-heading" ng-click="isCollapsed = !isCollapsed">
