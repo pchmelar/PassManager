@@ -179,7 +179,7 @@ module.exports = function($scope, $q, $sce, $window, Idle) {
                     });
                     return $q(function(resolve) {
                         $scope.filesDecrypted++;
-                        console.log($scope.filesDecrypted + "/" + $scope.filesTotal);
+                        //console.log($scope.filesDecrypted + "/" + $scope.filesTotal);
                         resolve();
                     });
                 }).catch(function(error) {

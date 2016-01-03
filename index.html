@@ -42,15 +42,13 @@
                         <input class="form-control" type="password" name="pwd" id="pwd" ng-model="pwd">
                         <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-remove': passForm.pwd.$invalid}"></span>
                     </div>
-                    <br>
-                    <br>
                 </form>
             </div>
         </div>
         <div class="row">
             <div class="col-md-12">
-                <h4 ng-if="filesDecrypted != filesTotal">Decrypting...</h4>
-                <div class="panel-group">
+                <h4 ng-if="filesDecrypted != filesTotal">Decrypting...<br><br></h4>
+                <div class="panel-group" ng-if="filesDecrypted == filesTotal">
                     <div class="panel panel-default" ng-repeat="o in output | orderBy: 'file'">
                         <div class="panel-heading" ng-click="isCollapsed = !isCollapsed">
                             <h4 class="panel-title">{{ o.file }}</h4>
