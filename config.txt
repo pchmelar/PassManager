@@ -1,3 +1,0 @@
-office/test.gpg
-office/test2.gpg
-office/test3.gpg
